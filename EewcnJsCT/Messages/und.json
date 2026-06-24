@@ -1,0 +1,16 @@
+﻿{
+  "Culture": "zh-CN",
+  "Strings": {
+    "SourceName": "EEWCN自定义数据源脚本",
+    "Str1": "This is an example message.",
+    "MyString2": "...",
+    "MyString3": "..."
+  },
+  "StringSets": {
+    "MyStringSet1": {
+      "Strings": {
+        "MyStringInStringSet": "This is an example message in an example string set."
+      }
+    }
+  }
+}

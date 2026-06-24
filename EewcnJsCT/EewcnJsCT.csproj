@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsExtensionProject>true</IsExtensionProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Cryville.EEW" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
+      <PackageReference Include="Cryville.EEW.Analyzer" Version="0.8.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Cryville.EEW.Features" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
+      <PackageReference Include="Cryville.EEW.Measure" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
+      <PackageReference Include="Cryville.EEW.TagTypeKeys" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
+      <PackageReference Include="Cryville.EEW.TTS" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.ClearScript" Version="7.5.1" />
+    </ItemGroup>
+
+</Project>

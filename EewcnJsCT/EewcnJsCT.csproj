@@ -1,9 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsExtensionProject>true</IsExtensionProject>
+        <Version>0.1.0</Version>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +26,8 @@
       <PackageReference Include="Cryville.EEW.TagTypeKeys" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
       <PackageReference Include="Cryville.EEW.TTS" Version="0.8.1" PrivateAssets="contentfiles;analyzers;build;runtime" ExcludeAssets="runtime" />
       <PackageReference Include="Microsoft.ClearScript" Version="7.5.1" />
+      <PackageReference Include="NAudio" Version="2.3.0" />
+      <PackageReference Include="System.Speech" Version="6.0.0" />
     </ItemGroup>
 
 </Project>

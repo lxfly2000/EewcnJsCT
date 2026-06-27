@@ -8,9 +8,6 @@ namespace EewcnJsCT
 {
     [Export(typeof(IBuilder<IGenerator<Feature>>))]
     public class AnnotatF : IBuilder<Annotat> {
-        // Define a configuration named MyConfig
-        public bool MyConfig { get; set; } = false;
-
         public string? GetName([NotNull] ref CultureInfo? culture) {
             using var lres = new LocalizedResource("", ref culture);
             var res = lres.RootMessageStringSet;
@@ -18,7 +15,7 @@ namespace EewcnJsCT
         }
         public Annotat Build(ref CultureInfo? culture) {
             // MyConfig has been set by the user here
-            return new Annotat(MyConfig);
+            return new Annotat();
         }
     }
 }

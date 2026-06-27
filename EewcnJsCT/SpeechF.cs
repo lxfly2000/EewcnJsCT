@@ -8,15 +8,13 @@ namespace EewcnJsCT
 {
     [Export(typeof(IBuilder<IGenerator<TTSEntry>>))]
     public class SpeechF : IBuilder<Speecher> {
-        public bool MyConfig { get; set; } = false;
-        
         public string? GetName([NotNull] ref CultureInfo? culture) {
             using var lres = new LocalizedResource("", ref culture);
             var res = lres.RootMessageStringSet;
             return res.GetStringRequired("SourceName");
         }
         public Speecher Build(ref CultureInfo? culture) {
-            return new Speecher(MyConfig);
+            return new Speecher();
         }
     }
 }

@@ -8,9 +8,6 @@ namespace EewcnJsCT
 {
     [Export(typeof(IBuilder<IGenerator<ReportModel>>))]
     public class ReporterF : IBuilder<Reporter> {
-        // Define a configuration named MyConfig
-        public bool MyConfig { get; set; } = false;
-
         public string? GetName([NotNull] ref CultureInfo? culture) {
             using var lres = new LocalizedResource("", ref culture);
             var res = lres.RootMessageStringSet;
@@ -18,7 +15,7 @@ namespace EewcnJsCT
         }
         public Reporter Build(ref CultureInfo? culture) {
             // MyConfig has been set by the user here
-            return new Reporter(MyConfig);
+            return new Reporter();
         }
     }
 }

@@ -1,53 +1,119 @@
 ﻿using System;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Cryville.EEW;
 using Microsoft.ClearScript;
-using Microsoft.ClearScript.V8;
 
 namespace EewcnJsCT
 {
-    public class Worker: ISourceWorker
+    public class Worker: ISourceWorker,IPropertiesHolder
     {
-        public bool MyConfig { get; set; }
+        public static Worker lastInstance = null;
+        public EewcnJs eewcnJs;
 
-        public Worker(bool myConfig)
+        public Worker(string webSocketEEWPingContent, string webSocketHistoryPingContent)
         {
-            MyConfig = myConfig;
+            eewcnJs=new EewcnJs(webSocketEEWPingContent, webSocketHistoryPingContent);
         }
         public string? GetName([NotNull] ref CultureInfo? culture) {
-            // Get the name of the source worker from the resources
-            using var lres = new LocalizedResource("", ref culture);
-            var res = lres.RootMessageStringSet;
-            return res.GetStringRequired("SourceName");
+            return Util.GetString("SourceName",ref culture);
         }
 
         public event Handler<object?>? Received;
         public event Handler<Heartbeat>? Heartbeat;
         public event Handler<Exception>? ErrorEmitted;
+        private ScriptObject lastEEWObject = null;
+        private ScriptObject lastHistoryObject = null;
+
+        public void InvokeReceived(object obj)
+        {
+            //obj常为ScriptObject类型
+            ScriptObject scriptObj=(ScriptObject)obj;
+            if (Util.GetScriptObjectDataType(ref scriptObj) == 1)
+            {
+                //EEW:data
+                List<int>indexes=Util.FindUpdatedEEWObjectIndex(ref lastEEWObject,ref scriptObj);
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    Received?.Invoke(this, new EEWEntry()
+                    {
+                        depth = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "depth"),
+                        epicenter = Util.GetObjectIndexString(ref scriptObj, "data", indexes[i], "epicenter"),
+                        eventId = Util.GetObjectIndexString(ref scriptObj, "data", indexes[i], "eventId"),
+                        intensity = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "intensity"),
+                        latitude = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "latitude"),
+                        longitude = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "longitude"),
+                        magnitude = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "magnitude"),
+                        startAt = Util.GetObjectIndexLong(ref scriptObj, "data", indexes[i], "startAt"),
+                        updates = Util.GetObjectIndexInt(ref scriptObj, "data", indexes[i], "updates"),
+                    });
+                }
+            }
+            else if (Util.GetScriptObjectDataType(ref scriptObj) == 2)
+            {
+                //History:shuju
+                List<int>indexes=Util.FindUpdatedHistoryObjectIndex(ref lastHistoryObject,ref scriptObj);
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    Received?.Invoke(this,new HistoryEntry()
+                    {
+                        AUTO_FLAG = Util.GetObjectIndexString(ref scriptObj,"shuju",indexes[i], "AUTO_FLAG"),
+                        EPI_DEPTH = Util.GetObjectIndexFloat(ref scriptObj, "shuju", indexes[i], "EPI_DEPTH"),
+                        EPI_LAT = Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "EPI_LAT"),
+                        EPI_LON = Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "EPI_LON"),
+                        EQ_TYPE = "M",
+                        id=Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "id"),
+                        intensity = Util.GetObjectIndexFloat(ref scriptObj, "shuju", indexes[i], "intensity"),
+                        LOCATION_C = Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "LOCATION_C"),
+                        M=Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "M"),
+                        O_TIME = Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "O_TIME"),
+                    });
+                }
+            }
+        }
 
         public async Task RunAsync(CancellationToken cancellationToken)
         {
-            ScriptEngine jsEngine = new V8ScriptEngine();//TODO:加载JS文件
+            try
+            {
+                lastInstance = this;
+                Logger.GetInstance().info(eewcnJs.GetString("ProgramStarted"));
+                if (eewcnJs.Init() != 0)
+                {
+                    Logger.GetInstance().error(eewcnJs.GetString("FailedToLoadJS"));
+                    return;
+                }
+
+                Logger.GetInstance().info(eewcnJs.GetString("LoadedScriptColon") + eewcnJs.JavaScriptPath);
+            }
+            catch (Exception e)
+            {
+                Logger.GetInstance().error(e.ToString());
+                return;
+            }
+
             try {
                 while (true) {
                     //Heartbeat表示程序正常工作的定期通知
                     Heartbeat?.Invoke(this,new Heartbeat());
-                    Received?.Invoke(this,"Pl");
+                    //Received?.Invoke(this,"Sth");
                     // ...
                     // Fetch and parse new events if there is any
                     // ...
 			
                     // Wait before next request
-                    await Task.Delay(TimeSpan.FromSeconds(60), cancellationToken).ConfigureAwait(true);
+                    eewcnJs.RunPeriodic();
+                    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(true);
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) {
                 // Do nothing: Worker task cancellation requested
             }
+
+            eewcnJs.End();
         }
 
         public void Dispose()

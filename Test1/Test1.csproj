@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Cryville.EEW" Version="0.8.1" />
+      <PackageReference Include="Microsoft.ClearScript" Version="7.5.1" />
+      <PackageReference Include="NAudio" Version="2.3.0" />
+      <PackageReference Include="System.Speech" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TestLib\TestLib.csproj" />
+    </ItemGroup>
+
+</Project>

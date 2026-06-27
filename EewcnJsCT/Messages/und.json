@@ -1,16 +1,37 @@
 ﻿{
-  "Culture": "zh-CN",
+  "Culture": "en-US",
   "Strings": {
-    "SourceName": "EEWCN自定义数据源脚本",
-    "Str1": "This is an example message.",
-    "MyString2": "...",
-    "MyString3": "..."
+    "SourceName": "EEWCN Custom.JS Data Source",
+    "ProgramStarted": "Program started.",
+    "FailedToLoadJS": "Failed to load custom.js.",
+    "FailedToLoadSettings": "Failed to load settings.json",
+    "LoadedScriptColon": "Loaded script: ",
+    "EEWWebSocketConnectedColon": "EEW WebSocket connected: ",
+    "EEWWebSocketConnectingColon": "EEW WebSocket connecting: ",
+    "EEWWebSocketReceiveCloseColon": "EEW WebSocket received close: ",
+    "HistoryWebSocketConnectedColon": "History WebSocket connected: ",
+    "HistoryWebSocketConnectingColon": "History WebSocket connecting: ",
+    "HistoryWebSocketReceiveCloseColon": "History WebSocket received close: ",
+    "EEWReceiveDataColon": "Received EEW data: ",
+    "EEWExceptionColon": "EEW Exception: ",
+    "HistoryReceiveDataColon": "Received history data: ",
+    "HistoryExceptionColon": "History Exception: ",
+    "SpeechInLangTagNotFoundColon": "Speech in this langTag not found: ",
+    "SpeechPlatformNotSupportedExceptionColon": "Speech is not supported on this platform: ",
+    "$ExtensionName": "EEWCN Custom.JS Data Source",
+    "$ExtensionDesc": "Add EEWCN Custom.JS Data Source to CysTerra.\nThe difference than the custom.js in original EEWCN includes:\n1. *_onfail, is_*_data are not used;\n2. sound.play() doesn’t support network URL;\n3. TTS may not be supported;\n4. WebSocket “ping” message are sent via text other than ping opcode, you may need to handle additional “pong” message in *_onsuccess.",
+    "$WSEEWPingContentName": "EEW WebSocket Ping Content",
+    "$WSEEWPingContentDescription": "A string to send for keeping EEW WebSocket connection. Default is “ping”.",
+    "$WSHistoryPingContentName": "History WebSocket Ping Content",
+    "$WSHistoryPingContentDescription": "A string to send for keeping history WebSocket connection. Default is “ping”.",
+    "ReportTitleEEW": "EEW",
+    "ReportTitleHistory": "Earthquake History",
+    "ReportSource": "JS Source",
+    "ReportOccur": "Occur",
+    "ReportHypoInt": "Hypo.Int.",
+    "ReportMagnitude": "M",
+    "ReportDepthColon": "Depth: "
   },
   "StringSets": {
-    "MyStringSet1": {
-      "Strings": {
-        "MyStringInStringSet": "This is an example message in an example string set."
-      }
-    }
   }
 }

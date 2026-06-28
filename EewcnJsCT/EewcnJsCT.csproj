@@ -5,6 +5,9 @@
         <Nullable>enable</Nullable>
         <IsExtensionProject>true</IsExtensionProject>
         <Version>0.1.0</Version>
+        <Title>EEWCN Custom.JS Data Source for CysTerra</Title>
+        <PackageProjectUrl>https://github.com/lxfly2000/EewcnJsCT</PackageProjectUrl>
+        <Company>lxfly2000</Company>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

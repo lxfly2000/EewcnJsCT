@@ -40,10 +40,11 @@ namespace EewcnJsCT
             else
             {
                 HistoryEntry entry = (HistoryEntry) e;
+                DateTimeOffset dto = DateTimeOffset.Parse(entry.O_TIME.ToUpper().Replace("UTC", ""));
                 result = new Feature()
                 {
                     { Is, Earthquake },
-                    { Time, new DateTimeOffset(DateTime.Parse(entry.O_TIME.ToUpper().Replace("UTC", "")), TimeSpan.Zero) },
+                    { Time, dto },
                     {
                         At, new Feature(new Point(Convert.ToDouble(entry.EPI_LON), Convert.ToDouble(entry.EPI_LAT)))
                         {

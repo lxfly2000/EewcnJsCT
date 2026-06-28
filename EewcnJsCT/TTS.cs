@@ -22,6 +22,7 @@ namespace EewcnJsCT
             try
             {
                 synth = new SpeechSynthesizer();
+                synth.SetOutputToDefaultAudioDevice();
             }
             catch (PlatformNotSupportedException e)
             {
@@ -45,8 +46,9 @@ namespace EewcnJsCT
                     .warn(Worker.lastInstance.eewcnJs.GetString("SpeechInLangTagNotFoundColon") + langTag);
             }
 
-            synth.SetOutputToDefaultAudioDevice();
-            synth.Speak(msg);
+            if(synth.State == SynthesizerState.Speaking)
+                synth.SpeakAsyncCancelAll();
+            synth.SpeakAsync(msg);
         }
     }
 }

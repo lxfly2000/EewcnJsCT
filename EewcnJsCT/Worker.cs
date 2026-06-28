@@ -43,7 +43,7 @@ namespace EewcnJsCT
                 //注意CysTerra的顺序是先发送的在下面，后发送的在上面
                 for (int i = indexes.Count-1; i >=0; i--)
                 {
-                    Received?.Invoke(this, new EEWEntry()
+                    EEWEntry eewEntry = new EEWEntry()
                     {
                         depth = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "depth"),
                         epicenter = Util.GetObjectIndexString(ref scriptObj, "data", indexes[i], "epicenter"),
@@ -54,11 +54,16 @@ namespace EewcnJsCT
                         magnitude = Util.GetObjectIndexFloat(ref scriptObj, "data", indexes[i], "magnitude"),
                         startAt = Util.GetObjectIndexLong(ref scriptObj, "data", indexes[i], "startAt"),
                         updates = Util.GetObjectIndexInt(ref scriptObj, "data", indexes[i], "updates"),
-                    });
-                    //调用OnReport
-                    ScriptObject elemObj = Util.GetObjectIndex(ref scriptObj, "data", i);
-                    string str=eewcnJs.ScriptObjectToString(ref elemObj);
-                    eewcnJs.GetEEWOnReport(ref str);
+                    };
+                    Received?.Invoke(this, eewEntry);
+                    //调用OnReport，但是失效的不报
+                    if (DateTimeOffset.Now.Ticks <
+                        Util.CalcLiveTimeTo(eewEntry.startAt, eewEntry.magnitude, eewEntry.depth).Ticks)
+                    {
+                        ScriptObject elemObj = Util.GetObjectIndex(ref scriptObj, "data", i);
+                        string str = eewcnJs.ScriptObjectToString(ref elemObj);
+                        eewcnJs.GetEEWOnReport(ref str);
+                    }
                 }
             }
             else if (Util.GetScriptObjectDataType(ref scriptObj) == 2)

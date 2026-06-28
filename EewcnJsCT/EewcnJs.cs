@@ -118,7 +118,7 @@ namespace EewcnJsCT
                 return 1;
             //成功执行脚本，获取设置项
             string settingsPath = jsPaths[indexJsPath].Replace("custom.js", "settings.json");
-            string settingsContent = File.ReadAllText(settingsPath);
+            string settingsContent = Util.ReadAllFile(settingsPath);
             if (!string.IsNullOrEmpty(settingsContent))
             {
                 try

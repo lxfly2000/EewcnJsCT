@@ -13,11 +13,18 @@ namespace EewcnJsCT
     {
         public static string ReadAllFile(string filePath)
         {
-            StreamReader file=new StreamReader(filePath,Encoding.UTF8);
-            string s = file.ReadToEnd();
-            file.Close();
-            file.Dispose();
-            return s;
+            try
+            {
+                StreamReader file = new StreamReader(filePath, Encoding.UTF8);
+                string s = file.ReadToEnd();
+                file.Close();
+                file.Dispose();
+                return s;
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public static string GetString(string key,[NotNull]ref CultureInfo? culture)

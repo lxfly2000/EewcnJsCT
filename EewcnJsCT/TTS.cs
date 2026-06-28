@@ -35,7 +35,7 @@ namespace EewcnJsCT
             if (synth == null || !Worker.lastInstance.eewcnJs.enableTTS)
                 return;
             if (synth.State == SynthesizerState.Speaking)
-                synth.Pause();
+                synth.SpeakAsyncCancelAll();
             try
             {
                 synth.SelectVoiceByHints(VoiceGender.NotSet, VoiceAge.NotSet, 0, new CultureInfo(langTag));
@@ -46,8 +46,6 @@ namespace EewcnJsCT
                     .warn(Worker.lastInstance.eewcnJs.GetString("SpeechInLangTagNotFoundColon") + langTag);
             }
 
-            if(synth.State == SynthesizerState.Speaking)
-                synth.SpeakAsyncCancelAll();
             synth.SpeakAsync(msg);
         }
     }

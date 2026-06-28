@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsExtensionProject>true</IsExtensionProject>
-        <Version>0.1.6</Version>
+        <Version>0.1.7</Version>
         <Title>EEWCN Custom.JS Data Source for CysTerra</Title>
         <PackageProjectUrl>https://github.com/lxfly2000/EewcnJsCT</PackageProjectUrl>
         <Company>lxfly2000</Company>

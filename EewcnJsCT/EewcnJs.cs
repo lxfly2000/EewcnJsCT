@@ -24,7 +24,7 @@ namespace EewcnJsCT
         private int language = 1;
         public object LastEvalObject { get; private set; } = null;
         public string JavaScriptPath { get; private set; } = "";
-        private ClientWebSocket wsEEW = null;
+        private ClientWebSocket wsEEW = null;//注意C#里WebSocket是一次性的，一旦连接失败、被关闭或主动断开连接就无法再复用，必须创建新的
         private ClientWebSocket wsHistory = null;
         private CancellationTokenSource cancelEEWSource = null;
         private CancellationTokenSource cancelHistorySource = null;
@@ -92,11 +92,11 @@ namespace EewcnJsCT
             //https://learn.microsoft.com/zh-cn/dotnet/core/compatibility/core-libraries/8.0/getfolderpath-unix
             string[] jsPaths =
             {
+                "./custom.js",
                 "~\\AppData\\Roaming\\lxfly2000\\eewcn\\custom.js",
                 "~/.local/share/lxfly2000/eewcn/custom.js",
                 "~/Library/Application Support/lxfly2000/eewcn/custom.js",
                 "/sdcard/Android/data/com.lxfly2000.eewcn/files/custom.js",
-                "./custom.js"
             };
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             int indexJsPath = -1;
@@ -198,13 +198,17 @@ namespace EewcnJsCT
                             case 0:
                             default:
                                 await wsEEW.CloseAsync(WebSocketCloseStatus.NormalClosure, "", cancelEEWSource.Token);
+                                wsEEW.Dispose();
+                                wsEEW = null;
                                 Logger.GetInstance().info(GetString("EEWWebSocketReceiveCloseColon") + wsUrl);
-                                break;
+                                return;
                             case 1:
                                 await wsHistory.CloseAsync(WebSocketCloseStatus.NormalClosure, "",
                                     cancelHistorySource.Token);
+                                wsHistory.Dispose();
+                                wsHistory = null;
                                 Logger.GetInstance().info(GetString("HistoryWebSocketReceiveCloseColon") + wsUrl);
-                                break;
+                                return;
                         }
                     }
                     else if (r.MessageType == WebSocketMessageType.Text)
@@ -218,11 +222,9 @@ namespace EewcnJsCT
                         {
                             case 0:
                             default:
-                                Logger.GetInstance().info(GetString("EEWReceiveDataColon") + response);
                                 Worker.lastInstance.InvokeReceived(GetEEWOnSuccess(ref response));
                                 break;
                             case 1:
-                                Logger.GetInstance().info(GetString("HistoryReceiveDataColon") + response);
                                 Worker.lastInstance.InvokeReceived(GetHistoryOnSuccess(ref response));
                                 break;
                         }
@@ -253,9 +255,9 @@ namespace EewcnJsCT
                         //使用WebSocket连接
                         //断线重连的实现：https://jocoboy.github.io/Hexo-Blog/2024/08/18/websocket-usage/
                         //先看是不是断线了或者还没连接
-                        if (wsEEW == null)
+                        if (wsEEW == null||wsEEW.State>WebSocketState.Open)
                             wsEEW = new ClientWebSocket();
-                        if (wsEEW.State==WebSocketState.None||wsEEW.State == WebSocketState.Closed || wsEEW.State == WebSocketState.Aborted)
+                        if (wsEEW.State==WebSocketState.None)
                         {
                             Logger.GetInstance().info(GetString("EEWWebSocketConnectingColon") + eewURL);
                             cancelEEWSource = new CancellationTokenSource();
@@ -299,7 +301,11 @@ namespace EewcnJsCT
                 {
                     Logger.GetInstance().error(GetString("EEWExceptionColon")+e.Message);
                     if (e is WebSocketException)
+                    {
+                        await wsEEW.CloseAsync(WebSocketCloseStatus.NormalClosure,"",cancelEEWSource.Token);
+                        wsEEW.Dispose();
                         wsEEW = null;
+                    }
                 }
 
                 lastEEWQueryMsts = nowMsts;
@@ -316,9 +322,9 @@ namespace EewcnJsCT
                         //使用WebSocket连接
                         //断线重连的实现：https://jocoboy.github.io/Hexo-Blog/2024/08/18/websocket-usage/
                         //先看是不是断线了或者还没连接
-                        if (wsHistory == null)
+                        if (wsHistory == null||wsHistory.State>WebSocketState.Open)
                             wsHistory = new ClientWebSocket();
-                        if (wsHistory.State==WebSocketState.None||wsHistory.State == WebSocketState.Closed || wsHistory.State == WebSocketState.Aborted)
+                        if (wsHistory.State==WebSocketState.None)
                         {
                             Logger.GetInstance().info(GetString("HistoryWebSocketConnectingColon") + historyURL);
                             cancelHistorySource = new CancellationTokenSource();
@@ -362,7 +368,11 @@ namespace EewcnJsCT
                 {
                     Logger.GetInstance().error(GetString("HistoryExceptionColon")+e.Message);
                     if (e is WebSocketException)
+                    {
+                        await wsHistory.CloseAsync(WebSocketCloseStatus.NormalClosure,"",cancelHistorySource.Token);
+                        wsHistory.Dispose();
                         wsHistory = null;
+                    }
                 }
                 lastHistoryQueryMsts = nowMsts;
             }
@@ -397,6 +407,11 @@ namespace EewcnJsCT
             return "";
         }
 
+        /// <summary>
+        /// 获取脚本处理结果
+        /// </summary>
+        /// <param name="response">传入字符串</param>
+        /// <returns>当JS返回null时，返回值为null，当JS返回undefined时，返回Undefined类，或者是一个由JSON产生的数据集</returns>
         public ScriptObject GetEEWOnSuccess(ref string response)
         {
             return (ScriptObject)_engine.Invoke("eew_onsuccess", response);

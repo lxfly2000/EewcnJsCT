@@ -24,6 +24,7 @@ namespace Test1
                 TestSound ts=new TestSound();
                 TestTTS tts = new TestTTS();
                 Console.WriteLine(DateTimeOffset.Parse("2020/01/01 12:00:00 +9").ToString());
+                TestWS ws = new TestWS();
                 Console.ReadLine();
             }
             catch (Exception e)
@@ -45,7 +46,9 @@ namespace Test1
             engine.Evaluate("function getobj(){return {name:'Zhang',age:1234567890000,yaju:[1,1,4,5,1,4]};}");
             //返回值类型参考：https://clearscript.clearfoundry.net/Reference/html/M_Microsoft_ClearScript_IScriptEngine_Evaluate_2.htm
             ScriptObject r = (ScriptObject)engine.Invoke("getobj");
-            Console.WriteLine(r.ToString());
+            if(r==null)
+                Console.WriteLine("R is NULL");
+            Console.WriteLine(r.GetType().ToString()+" : "+r.ToString());
             foreach (var key in r.PropertyNames)
             {
                 Console.WriteLine("Key: {0}, Value: {1}, Type: {2}", key, r[key], r[key].GetType().Name);
@@ -68,6 +71,8 @@ namespace Test1
             wsEEW = new ClientWebSocket();
             Console.WriteLine("Init state:" + wsEEW.State);
             Connect("ws://localhost:5404");
+            Console.ReadLine();
+            Connect("ws://localhost:5404");
         }
 
         public async Task Connect(string url)
@@ -84,6 +89,8 @@ namespace Test1
                 WebSocketReceiveResult r =
                     await wsEEW.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 Console.WriteLine(r.MessageType + ":" + Encoding.UTF8.GetString(buffer));
+                await  wsEEW.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                Console.WriteLine("Close State: {0}", wsEEW.State);
             }
             catch (Exception e)
             {

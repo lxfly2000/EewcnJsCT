@@ -14,7 +14,10 @@ namespace EewcnJsCT
         public static string ReadAllFile(string filePath)
         {
             StreamReader file=new StreamReader(filePath,Encoding.UTF8);
-            return file.ReadToEnd();
+            string s = file.ReadToEnd();
+            file.Close();
+            file.Dispose();
+            return s;
         }
 
         public static string GetString(string key,[NotNull]ref CultureInfo? culture)
@@ -157,6 +160,31 @@ namespace EewcnJsCT
         public static IEnumerable<string> GetObjectIndexKeys(ref ScriptObject obj, string rootKey, int index)
         {
             return ((ScriptObject)((ScriptObject)obj.GetProperty(rootKey))[index]).PropertyNames;
+        }
+
+        public static string JSRootDataToString(ref ScriptObject obj,string rootKey,ref List<int>selectedIndexes)
+        {
+            ScriptObject arrayObj = (ScriptObject)obj.GetProperty(rootKey);
+            int length = (int)arrayObj.GetProperty("length");
+            string s = "========ScriptObject========\n";
+            for (int i = 0; i < selectedIndexes.Count; i++)
+            {
+                s += rootKey + "[" + selectedIndexes[i] + "]:\n";
+                s += JSElemDataToString(ref obj, rootKey, selectedIndexes[i]);
+            }
+
+            return s+"========End=================\n";
+        }
+
+        public static string JSElemDataToString(ref ScriptObject obj,string rootKey,int index)
+        {
+            ScriptObject arrayObj = (ScriptObject)obj.GetProperty(rootKey);
+            ScriptObject e = (ScriptObject)arrayObj[index];
+            string s = "";
+            foreach (var key in e.PropertyNames)
+                s += key + " : " + e[key]+"\n";
+
+            return s;
         }
 
         public static int CalcMaxInt(float magnitude,float depth)

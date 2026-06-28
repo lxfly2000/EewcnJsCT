@@ -30,12 +30,16 @@ namespace EewcnJsCT
 
         public void InvokeReceived(object obj)
         {
-            //obj常为ScriptObject类型
+            //obj可能为ScriptObject类型，null或Undefined类
             ScriptObject scriptObj=(ScriptObject)obj;
             if (Util.GetScriptObjectDataType(ref scriptObj) == 1)
             {
                 //EEW:data
                 List<int>indexes=Util.FindUpdatedEEWObjectIndex(ref lastEEWObject,ref scriptObj);
+                if (indexes.Count > 0)
+                    Logger.GetInstance().info(eewcnJs.GetString("EEWReceiveDataColon") +
+                                              Util.JSRootDataToString(ref scriptObj, "data", ref indexes));
+                lastEEWObject = scriptObj;
                 for (int i = 0; i < indexes.Count; i++)
                 {
                     Received?.Invoke(this, new EEWEntry()
@@ -56,6 +60,10 @@ namespace EewcnJsCT
             {
                 //History:shuju
                 List<int>indexes=Util.FindUpdatedHistoryObjectIndex(ref lastHistoryObject,ref scriptObj);
+                if (indexes.Count > 0)
+                    Logger.GetInstance().info(eewcnJs.GetString("HistoryReceiveDataColon") +
+                                              Util.JSRootDataToString(ref scriptObj, "shuju", ref indexes));
+                lastHistoryObject = scriptObj;
                 for (int i = 0; i < indexes.Count; i++)
                 {
                     Received?.Invoke(this,new HistoryEntry()

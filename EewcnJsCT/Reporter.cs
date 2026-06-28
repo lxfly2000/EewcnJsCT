@@ -49,13 +49,15 @@ namespace EewcnJsCT {
                 result.Source=Worker.lastInstance.eewcnJs.GetString("ReportSource");
                 result.RevisionKey = new UpdatesKey(entry.updates);
                 result.Location = entry.epicenter;
-                result.Predicate=Worker.lastInstance.eewcnJs.GetString("ReportOccur");
+                result.Predicate=Worker.lastInstance.eewcnJs.GetString("EEWReportOccur");
                 result.Time = DateTimeOffset.FromUnixTimeMilliseconds(entry.startAt);
                 result.TimeZone=TimeZoneInfo.Local;
                 result.InvalidatedTime = Util.CalcLiveTimeTo(entry.startAt,entry.magnitude,entry.depth);
-                result.Properties.Add(new ReportProperty(TagTypeKeys.Intensity,Worker.lastInstance.eewcnJs.GetString("ReportHypoInt"),Util.CalcMaxInt(entry.magnitude,entry.depth).ToString(),1));
-                result.Properties.Add(new ReportProperty(TagTypeKeys.Magnitude,Worker.lastInstance.eewcnJs.GetString("ReportMagnitude"),entry.magnitude.ToString(),1));
-                result.Properties.Add(new ReportProperty(TagTypeKeys.HypocenterDepth,Worker.lastInstance.eewcnJs.GetString("ReportDepthColon"),((int)entry.depth).ToString()+"km",1));
+                int maxInt=Util.CalcMaxInt(entry.magnitude,entry.depth);
+                //Severity是个啥？
+                result.Properties.Add(new ReportProperty(TagTypeKeys.Intensity,Worker.lastInstance.eewcnJs.GetString("ReportHypoInt"),maxInt.ToString(),maxInt));
+                result.Properties.Add(new ReportProperty(TagTypeKeys.Magnitude,Worker.lastInstance.eewcnJs.GetString("ReportMagnitude"),entry.magnitude.ToString(),entry.magnitude));
+                result.Properties.Add(new ReportProperty(TagTypeKeys.HypocenterDepth,Worker.lastInstance.eewcnJs.GetString("ReportDepthColon"),((int)entry.depth)+"km",entry.depth));
                 result.GroupKeys.Add(new EventIDGroupKey(entry.eventId));
             }
             else
@@ -65,12 +67,14 @@ namespace EewcnJsCT {
                 result.Source=Worker.lastInstance.eewcnJs.GetString("ReportSource");
                 result.RevisionKey = new UpdatesKey(entry.AUTO_FLAG == "M" ? 1 : 0);
                 result.Location = entry.LOCATION_C;
-                //result.Predicate=Worker.lastInstance.eewcnJs.GetString("ReportOccur");
+                result.Predicate=Worker.lastInstance.eewcnJs.GetString("HistoryReportOccur");
                 result.Time = DateTimeOffset.Parse(entry.O_TIME.ToUpper().Replace("UTC", ""));
                 result.TimeZone = TimeZoneInfo.Local;
-                result.Properties.Add(new ReportProperty(TagTypeKeys.Intensity,Worker.lastInstance.eewcnJs.GetString("ReportHypoInt"),Util.CalcMaxInt(float.Parse(entry.M),entry.EPI_DEPTH).ToString(),1));
-                result.Properties.Add(new ReportProperty(TagTypeKeys.Magnitude,Worker.lastInstance.eewcnJs.GetString("ReportMagnitude"),entry.M,1));
-                result.Properties.Add(new ReportProperty(TagTypeKeys.HypocenterDepth,Worker.lastInstance.eewcnJs.GetString("ReportDepthColon"),((int)entry.EPI_DEPTH).ToString()+"km",1));
+                int maxInt = Util.CalcMaxInt(float.Parse(entry.M), entry.EPI_DEPTH);
+                //Severity是个啥？
+                result.Properties.Add(new ReportProperty(TagTypeKeys.Intensity,Worker.lastInstance.eewcnJs.GetString("ReportHypoInt"),maxInt.ToString(),maxInt));
+                result.Properties.Add(new ReportProperty(TagTypeKeys.Magnitude,Worker.lastInstance.eewcnJs.GetString("ReportMagnitude"),entry.M,Convert.ToSingle(entry.M)));
+                result.Properties.Add(new ReportProperty(TagTypeKeys.HypocenterDepth,Worker.lastInstance.eewcnJs.GetString("ReportDepthColon"),((int)entry.EPI_DEPTH)+"km",entry.EPI_DEPTH));
                 result.GroupKeys.Add(new EventIDGroupKey(entry.id));
             }
 

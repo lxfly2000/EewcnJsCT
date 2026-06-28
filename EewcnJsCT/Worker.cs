@@ -57,7 +57,7 @@ namespace EewcnJsCT
                     };
                     Received?.Invoke(this, eewEntry);
                     //调用OnReport，但是失效的不报
-                    if (DateTimeOffset.Now.Ticks <
+                    if (DateTimeOffset.UtcNow.Ticks <
                         Util.CalcLiveTimeTo(eewEntry.startAt, eewEntry.magnitude, eewEntry.depth).Ticks)
                     {
                         ScriptObject elemObj = Util.GetObjectIndex(ref scriptObj, "data", i);

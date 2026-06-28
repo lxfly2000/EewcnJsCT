@@ -19,6 +19,7 @@ namespace Test1
             try
             {
                 Console.WriteLine(Environment.OSVersion.Platform);
+                Console.WriteLine("NOW:"+DateTimeOffset.Now.Ticks+" UTCNOW:"+DateTimeOffset.UtcNow.Ticks+" FROMUNIX:"+DateTimeOffset.FromUnixTimeMilliseconds(1782639012162).Ticks);
                 TestJS test = new TestJS();
                 Console.WriteLine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"/EewcnJsCT");
                 TestSound ts=new TestSound();

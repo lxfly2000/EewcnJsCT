@@ -31,7 +31,7 @@ namespace EewcnJsCT
         
         public void play(string langTag, string msg)
         {
-            if (synth == null)
+            if (synth == null || !Worker.lastInstance.eewcnJs.enableTTS)
                 return;
             if (synth.State == SynthesizerState.Speaking)
                 synth.Pause();

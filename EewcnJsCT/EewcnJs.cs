@@ -22,6 +22,7 @@ namespace EewcnJsCT
         private string[] supportedLangTag = { "en", "zh_CN", "zh_TW", "ja" };
         private string userExtra = "";
         private int language = 1;
+        public bool enableTTS = true;
         public object LastEvalObject { get; private set; } = null;
         public string JavaScriptPath { get; private set; } = "";
         private ClientWebSocket wsEEW = null;//注意C#里WebSocket是一次性的，一旦连接失败、被关闭或主动断开连接就无法再复用，必须创建新的
@@ -62,6 +63,11 @@ namespace EewcnJsCT
             return 1;
         }
 
+        public string ScriptObjectToString(ref ScriptObject obj)
+        {
+            return (string)_engine.Invoke("_jsonToString", obj);
+        }
+
         private int GetSettingsInt(string key, int defValue)
         {
             try
@@ -79,6 +85,18 @@ namespace EewcnJsCT
             try
             {
                 return settingsJson.RootElement.GetProperty(key).GetString() ?? defValue;
+            }
+            catch (JsonException e)
+            {
+                return defValue;
+            }
+        }
+
+        private bool GetSettingsBool(string key, bool defValue)
+        {
+            try
+            {
+                return settingsJson.RootElement.GetProperty(key).GetBoolean();
             }
             catch (JsonException e)
             {
@@ -139,11 +157,14 @@ namespace EewcnJsCT
                 historyQueryCount = GetSettingsInt("historyQueryCount", historyQueryCount);
                 userExtra = GetSettingsString("userExtra", userExtra);
                 language = GetSettingsInt("language", language);
+                enableTTS = GetSettingsBool("enableTTS", enableTTS);
             }
             //添加JS调用的功能
             _engine.AddHostObject("logger", Logger.GetInstance());
             _engine.AddHostObject("tts",JSTTS.GetInstance());
             _engine.AddHostObject("sound",JSSound.GetInstance());
+            //补充JSON转字符串功能
+            _engine.Execute("function _jsonToString(j){return JSON.stringify(j);}");
             //向JS发送数据
             try{_engine.Invoke("setLangTag", supportedLangTag[language]);}catch{}
             try{_engine.Invoke("setUserData", userExtra);}catch{}

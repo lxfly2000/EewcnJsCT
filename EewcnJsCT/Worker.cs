@@ -40,7 +40,8 @@ namespace EewcnJsCT
                     Logger.GetInstance().info(eewcnJs.GetString("EEWReceiveDataColon") +
                                               Util.JSRootDataToString(ref scriptObj, "data", ref indexes));
                 lastEEWObject = scriptObj;
-                for (int i = 0; i < indexes.Count; i++)
+                //注意CysTerra的顺序是先发送的在下面，后发送的在上面
+                for (int i = indexes.Count-1; i >=0; i--)
                 {
                     Received?.Invoke(this, new EEWEntry()
                     {
@@ -54,6 +55,10 @@ namespace EewcnJsCT
                         startAt = Util.GetObjectIndexLong(ref scriptObj, "data", indexes[i], "startAt"),
                         updates = Util.GetObjectIndexInt(ref scriptObj, "data", indexes[i], "updates"),
                     });
+                    //调用OnReport
+                    ScriptObject elemObj = Util.GetObjectIndex(ref scriptObj, "data", i);
+                    string str=eewcnJs.ScriptObjectToString(ref elemObj);
+                    eewcnJs.GetEEWOnReport(ref str);
                 }
             }
             else if (Util.GetScriptObjectDataType(ref scriptObj) == 2)
@@ -64,7 +69,8 @@ namespace EewcnJsCT
                     Logger.GetInstance().info(eewcnJs.GetString("HistoryReceiveDataColon") +
                                               Util.JSRootDataToString(ref scriptObj, "shuju", ref indexes));
                 lastHistoryObject = scriptObj;
-                for (int i = 0; i < indexes.Count; i++)
+                //注意CysTerra的顺序是先发送的在下面，后发送的在上面
+                for (int i = indexes.Count-1; i >=0; i--)
                 {
                     Received?.Invoke(this,new HistoryEntry()
                     {
@@ -79,6 +85,10 @@ namespace EewcnJsCT
                         M=Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "M"),
                         O_TIME = Util.GetObjectIndexString(ref scriptObj, "shuju", indexes[i], "O_TIME"),
                     });
+                    //调用OnReport
+                    ScriptObject elemObj = Util.GetObjectIndex(ref scriptObj, "shuju", i);
+                    string str=eewcnJs.ScriptObjectToString(ref elemObj);
+                    eewcnJs.GetHistoryOnReport(ref str);
                 }
             }
         }

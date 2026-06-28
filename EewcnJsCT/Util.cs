@@ -169,6 +169,11 @@ namespace EewcnJsCT
             return ((ScriptObject)((ScriptObject)obj.GetProperty(rootKey))[index]).PropertyNames;
         }
 
+        public static ScriptObject GetObjectIndex(ref ScriptObject obj, string rootKey, int index)
+        {
+            return (ScriptObject)((ScriptObject)obj.GetProperty(rootKey))[index];
+        }
+
         public static string JSRootDataToString(ref ScriptObject obj,string rootKey,ref List<int>selectedIndexes)
         {
             ScriptObject arrayObj = (ScriptObject)obj.GetProperty(rootKey);
@@ -187,11 +192,7 @@ namespace EewcnJsCT
         {
             ScriptObject arrayObj = (ScriptObject)obj.GetProperty(rootKey);
             ScriptObject e = (ScriptObject)arrayObj[index];
-            string s = "";
-            foreach (var key in e.PropertyNames)
-                s += key + " : " + e[key]+"\n";
-
-            return s;
+            return Worker.lastInstance.eewcnJs.ScriptObjectToString(ref e)+"\n";
         }
 
         public static int CalcMaxInt(float magnitude,float depth)

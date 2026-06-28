@@ -43,12 +43,14 @@ namespace Test1
         public TestJS()
         {
             engine = new V8ScriptEngine();
+            engine.Execute("function _jsonToString(j){return JSON.stringify(j);}");
             engine.Evaluate("function getobj(){return {name:'Zhang',age:1234567890000,yaju:[1,1,4,5,1,4]};}");
             //返回值类型参考：https://clearscript.clearfoundry.net/Reference/html/M_Microsoft_ClearScript_IScriptEngine_Evaluate_2.htm
             ScriptObject r = (ScriptObject)engine.Invoke("getobj");
             if(r==null)
                 Console.WriteLine("R is NULL");
             Console.WriteLine(r.GetType().ToString()+" : "+r.ToString());
+            Console.WriteLine("JSON String:"+engine.Invoke("_jsonToString",r));
             foreach (var key in r.PropertyNames)
             {
                 Console.WriteLine("Key: {0}, Value: {1}, Type: {2}", key, r[key], r[key].GetType().Name);

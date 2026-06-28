@@ -1,0 +1,37 @@
+﻿{
+  "Culture": "zh-CN",
+  "Strings": {
+    "SourceName": "EEWCN自定义脚本数据源",
+    "ProgramStarted": "程序已启动。",
+    "FailedToLoadJS": "无法加载custom.js.",
+    "FailedToLoadSettings": "无法加载settings.json",
+    "LoadedScriptColon": "已加载脚本：",
+    "EEWWebSocketConnectedColon": "预警WebSocket已连接：",
+    "EEWWebSocketConnectingColon": "预警WebSocket正在连接：",
+    "EEWWebSocketReceiveCloseColon": "预警WebSocket收到关闭：",
+    "HistoryWebSocketConnectedColon": "地震历史WebSocket已连接：",
+    "HistoryWebSocketConnectingColon": "地震历史WebSocket正在连接：",
+    "HistoryWebSocketReceiveCloseColon": "地震历史WebSocket收到关闭：",
+    "EEWReceiveDataColon": "收到预警数据：",
+    "EEWExceptionColon": "预警异常(Exception)：",
+    "HistoryReceiveDataColon": "收到地震历史数据：",
+    "HistoryExceptionColon": "地震历史异常(Exception)：",
+    "SpeechInLangTagNotFoundColon": "未找到该语言的语音：",
+    "SpeechPlatformNotSupportedExceptionColon": "该平台不支持语音：",
+    "$ExtensionName": "EEWCN自定义脚本数据源",
+    "$ExtensionDesc": "添加CysTerra对EEWCN自定义脚本数据源的支持。\n该扩展与EEWCN中自定义脚本的区别包括：\n1. *_onfail(), is_*_data()不会被使用；\n2. sound.play()不支持网络路径；\n3. TTS可能不受支持；\n4. WebSocket “ping”消息是通过文本而非ping操作码发送的，你可能需要在*_onsuccess()中额外处理“pong”消息。",
+    "$WSEEWPingContentName": "预警WebSocket Ping内容",
+    "$WSEEWPingContentDescription": "用于保持预警WebSocket连接的发送文本。默认为“ping”。",
+    "$WSHistoryPingContentName": "地震历史WebSocket Ping内容",
+    "$WSHistoryPingContentDescription": "用于保持地震历史WebSocket连接的发送文本。默认为“ping”。",
+    "ReportTitleEEW": "地震预警",
+    "ReportTitleHistory": "地震报告",
+    "ReportSource": "JS数据源",
+    "ReportOccur": "发生",
+    "ReportHypoInt": "震中烈度",
+    "ReportMagnitude": "M",
+    "ReportDepthColon": "深度："
+  },
+  "StringSets": {
+  }
+}

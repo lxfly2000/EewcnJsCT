@@ -65,7 +65,7 @@ namespace EewcnJsCT {
                 result.Source=Worker.lastInstance.eewcnJs.GetString("ReportSource");
                 result.RevisionKey = new UpdatesKey(entry.AUTO_FLAG == "M" ? 1 : 0);
                 result.Location = entry.LOCATION_C;
-                result.Predicate=Worker.lastInstance.eewcnJs.GetString("ReportOccur");
+                //result.Predicate=Worker.lastInstance.eewcnJs.GetString("ReportOccur");
                 result.Time = DateTimeOffset.Parse(entry.O_TIME.ToUpper().Replace("UTC", ""));
                 result.TimeZone = TimeZoneInfo.Local;
                 result.Properties.Add(new ReportProperty(TagTypeKeys.Intensity,Worker.lastInstance.eewcnJs.GetString("ReportHypoInt"),Util.CalcMaxInt(float.Parse(entry.M),entry.EPI_DEPTH).ToString(),1));
